@@ -2,14 +2,26 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Todo from "./Todo";
 import uuid from "react-uuid";
+import db from "./firebase";
 
 function App() {
+  console.log(process.env.REACT_APP_WEATHER_API_KEY);
+
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
+  useEffect(() => {
+    db.collection("todos").onSnapshot((snapshot) => {
+      setTodos(snapshot.docs.map((doc) => doc.data().title));
+    });
+  }, []);
+
   const addToDo = (e) => {
     e.preventDefault();
-    setTodos([input, ...todos]);
+    // setTodos([input, ...todos]);
+    db.collection("todos").add({
+      title: input,
+    });
     setInput("");
   };
 
